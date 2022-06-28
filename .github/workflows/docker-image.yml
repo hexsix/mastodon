@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build the Docker image
+      - name: Check out the repo
         uses: actions/checkout@v3
         
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
+      - name: Build and push to Docker Hub
+        uses: docker/build-push-action@v3
         with:
           username: hexsix
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
