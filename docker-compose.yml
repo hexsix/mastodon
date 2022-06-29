@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    restart: always
+    restart: unless-stopped
     image: postgres:14-alpine
     shm_size: 256mb
     networks:
@@ -11,10 +11,12 @@ services:
     volumes:
       - ./postgres14:/var/lib/postgresql/data
     environment:
-      - 'POSTGRES_HOST_AUTH_METHOD=trust'
+      POSTGRES_DB: mastodon
+      POSTGRES_USER: mastodon
+      POSTGRES_PASSWORD: mastodon
 
   redis:
-    restart: always
+    restart: unless-stopped
     image: redis:6-alpine
     networks:
       - internal_network
@@ -24,7 +26,7 @@ services:
       - ./redis:/data
 
   # es:
-  #   restart: always
+  #   restart: unless-stopped
   #   image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
   #   environment:
   #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -43,9 +45,8 @@ services:
   #       hard: -1
 
   web:
-    build: .
     image: hexsix/mastodon
-    restart: always
+    restart: unless-stopped
     env_file: .env.production
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
     networks:
@@ -64,9 +65,8 @@ services:
       - ./public/system:/mastodon/public/system
 
   streaming:
-    build: .
     image: hexsix/mastodon
-    restart: always
+    restart: unless-stopped
     env_file: .env.production
     command: node ./streaming
     networks:
@@ -82,9 +82,8 @@ services:
       - redis
 
   sidekiq:
-    build: .
     image: hexsix/mastodon
-    restart: always
+    restart: unless-stopped
     env_file: .env.production
     command: bundle exec sidekiq
     depends_on:
