@@ -1,3 +1,5 @@
 default: styles/application.scss
 contrast: styles/contrast.scss
 mastodon-light: styles/mastodon-light.scss
+light-pink: styles/light-pink.scss
+dark-pink: styles/dark-pink.scss
