@@ -97,6 +97,16 @@ class Item extends PureComponent {
       height = 50;
     }
 
+    if (size > 4) {
+      if (index === 0 && size <= 6) {
+        height = 100;
+        width = 100;
+      } else {
+        height = 50;
+        width = 50;
+      }
+    }
+
     const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
 
     if (description?.length > 0) {
@@ -302,7 +312,11 @@ class MediaGallery extends PureComponent {
     if (this.isFullSizeEligible()) {
       style.aspectRatio = `${this.props.media.getIn([0, 'meta', 'small', 'aspect'])}`;
     } else {
-      style.aspectRatio = '3 / 2';
+      if (media.size > 4) {
+        style.aspectRatio = '3 / 3';
+      } else {
+        style.aspectRatio = '3 / 2';
+      }
     }
 
     const size     = media.size;
