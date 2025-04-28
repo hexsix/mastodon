@@ -26,13 +26,12 @@ on:
 jobs:
   # Build each (amd64 and arm64) image separately
   build-image:
-    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    runs-on: 'ubuntu-24.04'
     strategy:
       fail-fast: false
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +48,13 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
         id: buildx
+
+      - name: Log in to Docker Hub
+        if: contains(inputs.push_to_images, 'hexsix')
+        uses: docker/login-action@v3
+        with:
+          username: hexsix
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to Docker Hub
         if: contains(inputs.push_to_images, 'tootsuite')
@@ -128,6 +134,13 @@ jobs:
           # `hashFiles` is used to disambiguate between streaming and non-streaming images
           pattern: digests-${{ hashFiles(inputs.file_to_build) }}-*
           merge-multiple: true
+
+      - name: Log in to Docker Hub
+        if: contains(inputs.push_to_images, 'hexsix')
+        uses: docker/login-action@v3
+        with:
+          username: hexsix
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to Docker Hub
         if: contains(inputs.push_to_images, 'tootsuite')
