@@ -97,6 +97,35 @@ class Item extends PureComponent {
       height = 50;
     }
 
+    if (size > 4) {
+      if (size === 5) {
+        // 5张图: 第一张大图，其余2x2布局
+        if (index === 0) {
+          height = 100;
+          width = 100;
+        } else {
+          height = 50;
+          width = 50;
+        }
+      } else if (size === 6) {
+        // 6张图: 2x3布局
+        height = 50;
+        width = 33.33;
+      } else if (size === 7) {
+        // 7张图: 第一行3张，第二行4张
+        height = 50;
+        width = size === 7 && index >= 3 ? 25 : 33.33;
+      } else if (size === 8) {
+        // 8张图: 2x4布局
+        height = 50;
+        width = 25;
+      } else {
+        // 9张图及以上: 3x3布局
+        height = 33.33;
+        width = 33.33;
+      }
+    }
+
     const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
 
     if (description?.length > 0) {
@@ -302,7 +331,26 @@ class MediaGallery extends PureComponent {
     if (this.isFullSizeEligible()) {
       style.aspectRatio = `${this.props.media.getIn([0, 'meta', 'small', 'aspect'])}`;
     } else {
-      style.aspectRatio = '3 / 2';
+      if (media.size > 4) {
+        if (media.size === 5) {
+          // 5张图：主图+2x2布局
+          style.aspectRatio = '2 / 2';
+        } else if (media.size === 6) {
+          // 6张图：2x3布局
+          style.aspectRatio = '3 / 2';
+        } else if (media.size === 7) {
+          // 7张图：3+4布局（两行）
+          style.aspectRatio = '4 / 2';
+        } else if (media.size === 8) {
+          // 8张图：2x4布局
+          style.aspectRatio = '4 / 2';
+        } else {
+          // 9张图使用3x3的布局
+          style.aspectRatio = '3 / 3';
+        }
+      } else {
+        style.aspectRatio = '3 / 2';
+      }
     }
 
     const size     = media.size;
