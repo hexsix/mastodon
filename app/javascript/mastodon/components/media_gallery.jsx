@@ -88,13 +88,79 @@ class Item extends PureComponent {
 
     let width  = 50;
     let height = 100;
+    let right = '0px';
+    let left = '0px';
+    let bottom = '0px';
+    let top = '0px';
 
     if (size === 1) {
       width = 100;
-    }
-
-    if (size === 4 || (size === 3 && index > 0)) {
+    } else if (size === 2) {
+      width = 50;
+      if (index === 0) {
+        right = '2px';
+      } else {
+        left = '2px';
+      }
+    } else if (size === 3) {
+      width = 50;
       height = 50;
+      if (index === 0) {
+        right = '2px';
+      } else if (index > 0) {
+        left = '2px';
+      }
+      if (index === 1) {
+        bottom = '2px';
+      } else if (index > 1) {
+        top = '2px';
+      }
+    } else if (size === 4) {
+      width = 50;
+      height = 50;
+      if (index === 0 || index === 2) {
+        right = '2px';
+      }
+      if (index === 1 || index === 3) {
+        left = '2px';
+      }
+      if (index < 2) {
+        bottom = '2px';
+      } else {
+        top = '2px';
+      }
+    } else if (size >= 5 && size <= 9) {
+      width = 33.3;
+      height = 33.3;
+
+      // 处理最后一行的特殊情况
+      if (size === 5 && index === 4) {
+        width = 66.6;
+      } else if (size === 7 && index === 6) {
+        width = 100;
+      } else if (size === 8 && index === 7) {
+        width = 66.6;
+      }
+
+      // 处理垂直间距
+      if (index < 3) {
+        bottom = '2px';
+      } else if (index >= 6) {
+        top = '2px';
+      } else {
+        top = '2px';
+        bottom = '2px';
+      }
+
+      // 处理水平间距
+      if (index % 3 === 0) {
+        right = '2px';
+      } else if (index % 3 === 1) {
+        left = '2px';
+        right = '2px';
+      } else {
+        left = '2px';
+      }
     }
 
     const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
@@ -185,7 +251,7 @@ class Item extends PureComponent {
     }
 
     return (
-      <div className={classNames('media-gallery__item', { standalone, 'media-gallery__item--tall': height === 100, 'media-gallery__item--wide': width === 100 })} key={attachment.get('id')}>
+      <div className={classNames('media-gallery__item', { standalone, 'media-gallery__item--tall': height === 100, 'media-gallery__item--wide': width === 100 })} key={attachment.get('id')} style={{ right, left, bottom, top }}>
         <Blurhash
           hash={attachment.get('blurhash')}
           dummy={!useBlurhash}
